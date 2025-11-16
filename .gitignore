@@ -1,0 +1,12 @@
+_site/
+.sass-cache/
+.jekyll-cache/
+.bundle/
+Gemfile.lock
+vendor/
+.DS_Store
+node_modules/
+.env
+*.log
+.byebug_history
+coverage/
