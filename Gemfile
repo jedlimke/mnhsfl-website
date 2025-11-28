@@ -1,8 +1,0 @@
-source "https://rubygems.org"
-gem "jekyll", "~> 3.9.0"
-gem "minima", "2.5.0"
-gem "kramdown-parser-gfm"
-gem "csv"
-gem "base64"
-gem "bigdecimal", "3.2.2"
-gem "webrick"

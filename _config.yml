@@ -1,9 +1,5 @@
 title: The Minnesota State High School Fencing League
-email: info@mnhsfl.org
-description: >-
-  Information regarding the MNHSFL.
-baseurl: "" # the subpath of the site, e.g. /blog
-url: "" # the base hostname & protocol for the site
+description: Information regarding the MNHSFL.
 
 # Minima theme v2.5.0
 theme: minima
@@ -15,7 +11,6 @@ sass:
 # Exclude internal files from site
 exclude:
   - README.md
-  - notes.md
 
 # Minima config (see https://github.com/jekyll/minima/blob/v2.5.0/README.md)
 minima:
@@ -23,7 +18,3 @@ minima:
   social_links:
     - { platform: facebook, user_url: "https://www.facebook.com/mnhsfl" }
     - { platform: email, user_url: "info@mnhsfl.org" }
-
-# Only show these pages in the top navigation
-header_pages:
-  - policies/index.md
