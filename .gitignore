@@ -10,6 +10,7 @@ node_modules/
 *.log
 .byebug_history
 coverage/
+sample.html
 
 # Old custom.scss - kept for reference
 _sass/custom.scss
