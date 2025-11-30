@@ -31,13 +31,23 @@
   --bg-white: #FFF;
   --table-breakout-padding: 30px;
   --border-color: #ccc;
+
+  // Homepage hero
+  --hero-bg-start: #1a1a2e;
+  --hero-bg-mid: #16213e;
+  --hero-bg-end: #0f3460;
+  --hero-text-color: #fff;
+
+  // Font stacks
+  --font-display: "Neuton", serif;
+  --font-body: "Figtree", sans-serif;
 }
 
 // ============================================================================
 // BASE STYLES
 // ============================================================================
 html, body {
-  font-family: "Figtree", sans-serif;
+  font-family: var(--font-body);
   font-size: 20px;
   background-color: var(--bg-light);
   transition-property: background-color, color;
