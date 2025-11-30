@@ -27,3 +27,12 @@ TO BE HONEST, we don't need to require a specific CSV format for the results... 
 Ideally we would attach some JS/sort crap to the table headers, though, and maybe some filtering library. jquery in 2025, anyone?
 
 ALSO, maybe instead of filenames, we require the uploader to put files into folders instead--that'd allow us to handle more than one CSV or more than one MD... perhaps stitched together in some sort of alphabetical-order... it's a thought. We might be able to handle metadata in that file, too... I don't want things too complicated but I'm imagining a situation where they want more than one thing on a particular landing... but then again, they could use a blog post and stitch things together with that, instead... hmm. COMPLEXITY vs. USEFULNESS...
+
+# TODOS:
+
+1. Update theme to be snazzier
+2. Rewrite script to be easier to read/break it down following five-lines-of-code principles (I'm thinking folders now in case we have photos and such that need to be incorporated, too)
+3. Test script on actual fencer data
+4. Add blog post capabilities
+5. Figure out images on posts
+6. Figure out site logo
