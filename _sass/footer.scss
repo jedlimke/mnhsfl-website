@@ -67,6 +67,11 @@
   }
 }
 
+.social-media-list a {
+	display: flex;
+	align-items: center;
+}
+
 // At wide breakpoint, go multi-column and expand wrapper
 @media screen and (min-width: 1200px) {
   .site-footer .wrapper {

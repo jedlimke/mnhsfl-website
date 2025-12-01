@@ -29,11 +29,10 @@ exclude:
 # See https://github.com/jekyll/minima
 minima:
   skin: solarized  # Options: auto, classic, dark, solarized, solarized-dark
-  
-  # Social links in footer
-  social_links:
-    - { platform: facebook, user_url: "https://www.facebook.com/mnhsfl" }
-    - { platform: email, user_url: "mailto:info@mnhsfl.org" }
+
+# Social links (Minima 2.5.x format - uses usernames)
+facebook_username: mnhsfl
+email: info@mnhsfl.org
 
 # Show excerpts on home page
 show_excerpts: true
