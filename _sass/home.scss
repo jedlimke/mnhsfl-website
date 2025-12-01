@@ -18,6 +18,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  // Adjust for funky padding on the minima header
+  margin-top: calc(-1 * var(--spacing-unit))
 }
 
 .hero-content {
@@ -25,10 +28,11 @@
   margin: 0 auto;
   padding: var(--spacing-unit);
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: var(--spacing-unit);
   align-items: center;
   width: 100%;
+  text-align: center;
 }
 
 .hero-text h1 {
@@ -55,18 +59,15 @@
   height: auto;
 }
 
-// Hero responsive
-@media screen and (max-width: 800px) {
+// Hero wide breakpoint - side by side
+@media screen and (min-width: 1200px) {
   .hero-content {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-  
-  .hero-image {
-    order: -1;
+    grid-template-columns: 1fr 1fr;
+    text-align: left;
   }
 }
 
+// Mobile - reduce min-height
 @media screen and (max-width: 600px) {
   .hero {
     min-height: auto;
