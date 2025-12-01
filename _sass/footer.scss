@@ -5,13 +5,17 @@
 .site-footer {
   background: var(--bg-white);
   padding: var(--spacing-unit) 0;
-  border-top: 1px solid var(--border-color);
+  border-top: none;
 }
 
 .footer-content {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--spacing-unit);
+
+	a:link, a:visited {
+		color: var(--brand-blue);
+	}
 }
 
 // Footer brand / logo area

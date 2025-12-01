@@ -2,13 +2,28 @@
  * Header layout overrides
  * 
  * Extends the header to full width at wide breakpoints.
+ * 
+ * Note: Media query breakpoints must be hardcoded (CSS variables don't work
+ * in media queries). Keep in sync with --breakpoint-* values in custom.scss.
  */
+
+.site-header {
+//   background: var(--bg-white);
+	border-top-color: var(--brand-blue);
+}
 
 // Use flexbox for proper vertical alignment
 .site-header .wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+// Mobile: keep nav positioned for hamburger menu
+@media screen and (max-width: 599px) {
+  .site-header .wrapper {
+    min-height: var(--header-height);
+  }
 }
 
 // Override Minima's float/position on nav (desktop only)
@@ -23,7 +38,7 @@
 // Logo sizing
 .site-title img {
   display: block;
-  height: 40px;
+  height: var(--header-logo-height);
   width: auto;
 }
 

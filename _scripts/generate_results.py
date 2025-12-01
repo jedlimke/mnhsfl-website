@@ -171,7 +171,6 @@ class ResultsGenerator:
         if intro_content:
             full_content += intro_content + "\n\n"
         
-        full_content += "## Results\n\n"
         full_content += table_content
         
         # Write output file

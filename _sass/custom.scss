@@ -28,15 +28,20 @@
   // Max width for wide content (header, footer, hero at wide breakpoint)
   --content-max-width: 1440px;
 
-  --brand-gold: darkgoldenrod;
-  --bg-light: #F4F2F0;
+  // Header
+  --header-height: calc(var(--spacing-unit) * 1.865);
+  --header-logo-height: 40px;
+
+  --brand-gold: #de9f43;
+  --brand-blue: #2b2c57;
+  --bg-light: #f0eade;
   --bg-white: #FFF;
   --table-breakout-padding: 30px;
-  --border-color: #ccc;
+  --border-color: #00000022;
 
   // Homepage hero
-  --hero-bg-start: #002D5D;
-  --hero-bg-end: #52C9E8;
+  --hero-bg-start: var(--brand-blue);
+  --hero-bg-end: var(--brand-blue);
   --hero-text-color: #fff;
 
   // Font stacks
@@ -56,13 +61,6 @@ html, body {
   transition-timing-function: ease-in-out;
 }
 
-// ============================================================================
-// HEADER
-// ============================================================================
-.site-header {
-  background: var(--bg-white);
-}
-
 // Logo styling when using site.logo
 .site-title img {
   height: 40px;
@@ -70,10 +68,18 @@ html, body {
   vertical-align: middle;
 }
 
+a:link, a:visited {
+	color: var(--brand-gold);
+}
+
 // ============================================================================
 // HEADINGS
 // ============================================================================
-h2 {
+h1, h2, h3, h4, h5, h6 {
+	font-weight: bolder;
+	color: var(--brand-blue);
+}
+h2, h3, h4, h5, h6 {
   border-bottom: solid thin var(--border-color);
   padding-bottom: 0.5em;
 //   color: var(--brand-gold);
@@ -121,19 +127,19 @@ table {
 
 // Desktop/Large (>800px) - DEFAULT VALUES
 body {
-  background-color: lightblue;
+
 }
 
 // Tablet/Medium (601px - 800px)
 @media screen and (max-width: 800px) {
   body {
-    background-color: lightgreen;
+    // background-color: lightgreen;
   }
 }
 
 // Mobile/Small (≤600px)
 @media screen and (max-width: 600px) {
   body {
-    background-color: lightcoral;
+    // background-color: lightcoral;
   }
 }
