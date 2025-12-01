@@ -57,19 +57,23 @@
 }
 
 // Footer bottom (copyright)
-.footer-bottom {
-  margin-top: var(--spacing-unit);
-  padding-top: var(--spacing-unit);
-  border-top: 1px solid var(--border-color);
+// .footer-bottom {
+//   margin-top: var(--spacing-unit);
+//   padding-top: var(--spacing-unit);
+//   border-top: 1px solid var(--border-color);
   
-  p {
-    margin: 0;
-  }
-}
+//   p {
+//     margin: 0;
+//   }
+// }
 
 .social-media-list a {
 	display: flex;
 	align-items: center;
+}
+
+.footer-license {
+	font-size: 0.6rem;
 }
 
 // At wide breakpoint, go multi-column and expand wrapper

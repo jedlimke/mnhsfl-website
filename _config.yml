@@ -31,8 +31,31 @@ exclude:
 minima:
   skin: solarized  # Options: auto, classic, dark, solarized, solarized-dark
 
-# Social links (Minima 2.5.x format - uses usernames)
+# =============================================================================
+# Social Links (Minima 2.5.x format)
+# Uncomment and fill in the username to enable each social link.
+# These appear in the footer via Minima's built-in social.html include.
+# =============================================================================
 facebook_username: mnhsfl
+# twitter_username: 
+# instagram_username: 
+# youtube_username: 
+# github_username: 
+# linkedin_username: 
+# pinterest_username: 
+# dribbble_username: 
+# flickr_username: 
+# googleplus_username: 
+
+# Mastodon (requires both username and instance)
+# mastodon:
+#   - username: 
+#     instance: mastodon.social
+
+# RSS feed link (set to any text to enable, e.g., "RSS")
+# rss: "RSS"
+
+# Contact email (shows in footer contact list, NOT in social icons)
 email: info@mnhsfl.org
 
 # Show excerpts on home page

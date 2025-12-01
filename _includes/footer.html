@@ -34,14 +34,20 @@
       {%- comment -%} Social / contact {%- endcomment -%}
       <div class="footer-social">
         <!-- <h3>Connect</h3> -->
+        <ul class="social-media-list">
+          {%- if site.email -%}
+            <li><a href="mailto:{{ site.email }}"><svg class="svg-icon"><use xlink:href="{{ '/assets/minima-social-icons.svg#email' | relative_url }}"></use></svg><span class="username">{{ site.email | escape }}</span></a></li>
+          {%- endif -%}
+        </ul>
         {%- include social.html -%}
       </div>
 
     </div>
 
-    <div class="footer-bottom">
-      <p>&copy; {{ site.time | date: "%Y" }} {{ site.title | escape }}. All rights reserved.</p>
-    </div>
+	<p class="footer-license">&copy; {{ site.time | date: "%Y" }} {{ site.author | escape }} under the terms of the <a href="{{ '/LICENSE' | relative_url }}">MIT License</a>.</p>
+    <!-- <div class="footer-bottom">
+      <p class="footer-license">&copy; {{ site.time | date: "%Y" }} {{ site.title | escape }} under the terms of the <a href="{{ '/LICENSE' | relative_url }}">MIT License</a>.</p>
+    </div> -->
 
   </div>
 
