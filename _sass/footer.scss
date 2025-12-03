@@ -110,8 +110,16 @@
     }
 }
 
-// Tablet and up: right-align nav links (600px+)
-@media screen and (min-width: 600px) {
+// Desktop: two-column layout and expand wrapper (800px+)
+@media screen and (min-width: 800px) {
+    .site-footer .wrapper {
+        max-width: var(--content-max-width);
+    }
+
+    .footer-content {
+        grid-template-columns: 2fr 1fr;
+    }
+	
     .footer-links {
         text-align: right;
     }
@@ -121,16 +129,5 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-    }
-}
-
-// Desktop: two-column layout and expand wrapper (800px+)
-@media screen and (min-width: 800px) {
-    .site-footer .wrapper {
-        max-width: var(--content-max-width);
-    }
-
-    .footer-content {
-        grid-template-columns: 2fr 1fr;
     }
 }
