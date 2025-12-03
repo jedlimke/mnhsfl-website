@@ -64,8 +64,10 @@ show_excerpts: true
 
 # Only show these pages in the top navigation
 header_pages:
-  - policies/index.md
+  - about/index.md
+  - competitors/index.md
   - results/index.md
+  - policies/index.md
 
 # Collections (for future use)
 collections:

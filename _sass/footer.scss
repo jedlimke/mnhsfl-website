@@ -33,7 +33,43 @@
   
   .footer-description {
     margin-top: calc(var(--spacing-unit) / 2);
-	font-size: 0.75rem;
+    margin-bottom: calc(var(--spacing-unit) / 2);
+    font-size: 0.75rem;
+  }
+}
+
+// Inline social icons below description
+.footer-social-inline {
+  margin-top: calc(var(--spacing-unit) / 2);
+  
+  .social-media-list {
+    display: flex;
+    gap: calc(var(--spacing-unit) / 2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    
+    li {
+      margin: 0;
+    }
+    
+    a {
+      display: flex;
+      align-items: center;
+      
+      .username {
+        // Hide the text, keep only icons
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+      }
+    }
   }
 }
 
@@ -54,52 +90,22 @@
   }
 }
 
-// Footer social
-.footer-social {
-  h3 {
-    margin: 0 0 calc(var(--spacing-unit) / 2) 0;
-  }
-}
-
-// Footer bottom (copyright)
-// .footer-bottom {
-//   margin-top: var(--spacing-unit);
-//   padding-top: var(--spacing-unit);
-//   border-top: 1px solid var(--border-color);
-  
-//   p {
-//     margin: 0;
-//   }
-// }
-
-.social-media-list a {
-	display: flex;
-	align-items: center;
-}
-
-// Right-align the link columns
+// Right-align the nav link column
 .footer-links {
   text-align: right;
-  
-  .social-media-list {
-    li {
-      display: flex;
-      justify-content: flex-end;
-    }
-  }
 }
 
 .footer-license {
 	font-size: 0.6rem;
 }
 
-// At wide breakpoint, go multi-column and expand wrapper
+// At wide breakpoint, go two-column and expand wrapper
 @media screen and (min-width: 1200px) {
   .site-footer .wrapper {
     max-width: var(--content-max-width);
   }
   
   .footer-content {
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
   }
 }
