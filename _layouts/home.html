@@ -6,16 +6,9 @@ body_class: home
 {%- comment -%}
   HOMEPAGE LAYOUT
   
-  This layout provides the fancy homepage structure.
-  Site admins only need to set front matter variables in index.md:
-  
-  ---
-  layout: home
-  announcement_title: "Latest News"
-  announcement_text: "Your announcement text here"
-  announcement_link_text: "View Results →"
-  announcement_link_url: "/results/turkey-tussle-2025.html"
-  ---
+  Automatically pulls latest posts from _posts/ folder.
+  No configuration needed - just add new markdown files to _posts/
+  with filename format: YYYY-MM-DD-title-slug.md
 {%- endcomment -%}
 
 <section class="hero">
@@ -25,22 +18,37 @@ body_class: home
   </div>
 </section>
 
-{% if page.announcement_title or page.announcement_text %}
+{%- comment -%} Featured post (latest) {%- endcomment -%}
+{% assign latest_post = site.posts.first %}
+{% if latest_post %}
 <div class="announcement">
-  {% if page.announcement_title %}
-    <h2>{{ page.announcement_title }}</h2>
-  {% endif %}
-  {% if page.announcement_text %}
-    <p>{{ page.announcement_text }}</p>
-  {% endif %}
-  {% if page.announcement_link_url %}
-    <a href="{{ page.announcement_link_url }}" class="announcement-link">
-      {{ page.announcement_link_text | default: "Learn More →" }}
-    </a>
-  {% endif %}
+  <h2>{{ latest_post.title }}</h2>
+  <p>{{ latest_post.excerpt | strip_html | truncatewords: 30 }}</p>
+  <a href="{{ latest_post.url | relative_url }}" class="announcement-link">
+    Read More →
+  </a>
 </div>
 {% endif %}
 
 <div class="home-content">
-{{ content }}
+  {%- comment -%} Recent posts (next 2-3 after featured) {%- endcomment -%}
+  {% assign recent_posts = site.posts | offset: 1 | limit: 3 %}
+  {% if recent_posts.size > 0 %}
+  <section class="recent-news">
+    <h2>Recent News</h2>
+    <ul class="news-list">
+      {% for post in recent_posts %}
+      <li>
+        <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %-d, %Y" }}</time>
+        <p>{{ post.excerpt | strip_html | truncatewords: 20 }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+    <a href="/news/" class="more-news-link">More News →</a>
+  </section>
+  {% endif %}
+
+  {%- comment -%} Page content (from index.md) {%- endcomment -%}
+  {{ content }}
 </div>
