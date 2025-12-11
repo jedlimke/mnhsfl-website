@@ -3,6 +3,7 @@ layout: post
 title: "Turkey Tussle Results Posted"
 date: 2025-11-25
 categories: results
+image: https://placehold.co/800x600/d4af37/ffffff?text=Turkey+Tussle
 excerpt: "Results from the Turkey Tussle tournament are now available."
 ---
 

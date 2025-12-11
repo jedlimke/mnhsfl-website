@@ -1,54 +1,52 @@
----
-layout: default
-body_class: home
----
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: " en" }}">
 
-{%- comment -%}
-  HOMEPAGE LAYOUT
-  
-  Automatically pulls latest posts from _posts/ folder.
-  No configuration needed - just add new markdown files to _posts/
-  with filename format: YYYY-MM-DD-title-slug.md
-{%- endcomment -%}
+{%- include head.html -%}
 
-<section class="hero">
-  <div class="hero-content">
-    <img src="{{ '/assets/mnhsfl-block-inverted.svg' | relative_url }}" alt="{{ site.title | escape }}" class="hero-logo">
-    <p class="hero-tagline">Supporting, fostering, and promoting competitive high school fencing in Minnesota through regulated competition, instruction, and outreach.</p>
-  </div>
-</section>
+<body class="home">
 
-{%- comment -%} Featured post (latest) {%- endcomment -%}
-{% assign latest_post = site.posts.first %}
-{% if latest_post %}
-<div class="announcement">
-  <h2>{{ latest_post.title }}</h2>
-  <p>{{ latest_post.excerpt | strip_html | truncatewords: 30 }}</p>
-  <a href="{{ latest_post.url | relative_url }}" class="announcement-link">
-    Read More →
-  </a>
-</div>
-{% endif %}
+	{%- include header.html -%}
 
-<div class="home-content">
-  {%- comment -%} Recent posts (next 2-3 after featured) {%- endcomment -%}
-  {% assign recent_posts = site.posts | offset: 1 | limit: 3 %}
-  {% if recent_posts.size > 0 %}
-  <section class="recent-news">
-    <h2>Recent News</h2>
-    <ul class="news-list">
-      {% for post in recent_posts %}
-      <li>
-        <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
-        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %-d, %Y" }}</time>
-        <p>{{ post.excerpt | strip_html | truncatewords: 20 }}</p>
-      </li>
-      {% endfor %}
-    </ul>
-    <a href="/news/" class="more-news-link">More News →</a>
-  </section>
-  {% endif %}
+	<section class="hero">
+		<div class="hero-content">
+			<img src="{{ '/assets/mnhsfl-block-inverted.svg' | relative_url }}" alt="{{ site.title | escape }}"
+				class="hero-logo">
+			<p class="hero-tagline">Supporting, fostering, and promoting competitive high school fencing in
+				Minnesota through regulated competition, instruction, and outreach.</p>
+		</div>
+	</section>
 
-  {%- comment -%} Page content (from index.md) {%- endcomment -%}
-  {{ content }}
+	<main class="page-content" aria-label="Content">
+
+		{%- comment -%} POSTS GRID: Full width with internal constraint {%- endcomment -%}
+		{% assign latest_posts = site.posts | limit: 5 %}
+		{% if latest_posts.size > 0 %}
+		<section class="posts-grid-section">
+			<div class="posts-grid-container">
+				<div class="recent-posts-grid">
+					{% for post in latest_posts %}
+					<a href="{{ post.url | relative_url }}" class="post-card{% if post.image %} has-image{% endif %}" {%
+						if post.image %} style="background-image: url('{{ post.image }}')" {% endif %}>
+						<div class="post-card-content">
+							<h2>{{ post.title }}</h2>
+						</div>
+					</a>
+					{% endfor %}
+				</div>
+			</div>
+		</section>
+		{% endif %}
+
+		{%- comment -%} HOME CONTENT: Normal wrapper width {%- endcomment -%}
+		<div class="wrapper">
+			{{ content }}
+		</div>
+
+	</main>
+
+	{%- include footer.html -%}
+
+</body>
+
+</html>
 </div>

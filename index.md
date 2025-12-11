@@ -4,4 +4,4 @@ title: The Minnesota High School Fencing League (MNHSFL)
 body_class: home
 ---
 
-Welcome to the Minnesota High School Fencing League! We provide competitive fencing opportunities for students in grades 7-12 across Minnesota.
+Lorem ipsum dolor sit amet. Accusamus sunt esse blanditiis sed beatae quo unde suscipit. Ipsam aliquam consequuntur aspernatur quia. Eligendi ullam ipsam labore placeat ullam corrupti corrupti ut. Voluptatem saepe non perferendis qui magni sint odio explicabo.
