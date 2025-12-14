@@ -1,4 +1,10 @@
 <header class="site-header" role="banner">
+	
+	{%- comment -%}
+		site.pages is automatically populated by Jekyll with all standalone HTML and Markdown files in the project that are not posts, drafts, or special files (like those in _posts, _includes, _layouts, sass, etc.).
+
+		It includes all .html and .md files in the root and subdirectories (except for those in special folders), making each file a Page object accessible via site.pages.
+	{%- endcomment -%}
 
 	{%- assign default_paths = site.pages | map: "path" -%}
 	{%- assign page_paths = site.header_pages | default: default_paths -%}
