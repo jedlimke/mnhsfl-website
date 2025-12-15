@@ -149,8 +149,7 @@ class CsvReader:
         return self._read_csv_rows(csv_path)
     
     def _validate_file_size(self, csv_path: Path):
-        file_size_mb = csv_path.stat().st_size / (1024 * 1024)
-        if file_size_mb > self.MAX_SIZE_MB:
+        if (file_size_mb := csv_path.stat().st_size / (1024 * 1024)) > self.MAX_SIZE_MB:
             raise ValueError(f"CSV file too large: {file_size_mb:.1f}MB (max: {self.MAX_SIZE_MB}MB)")
     
     def _read_csv_rows(self, csv_path: Path) -> list[list[str]]:
@@ -181,9 +180,10 @@ class TableFormatter:
         return self._build_table(headers, data_rows)
     
     def _clean_headers(self, headers: list[str]) -> list[str]:
+        if not (headers and headers[0].startswith('\ufeff')):
+            return headers
         cleaned = headers.copy()
-        if cleaned and cleaned[0].startswith('\ufeff'):
-            cleaned[0] = cleaned[0].lstrip('\ufeff')
+        cleaned[0] = cleaned[0].lstrip('\ufeff')
         return cleaned
     
     def _build_table(self, headers: list[str], data_rows: list[list[str]]) -> str:
@@ -214,8 +214,7 @@ class IntroContentReader:
     """Reads intro content from markdown files."""
     
     def read(self, csv_path: Path) -> tuple[dict[str, str], str]:
-        md_path = csv_path.with_suffix('.md')
-        if not md_path.exists():
+        if not (md_path := csv_path.with_suffix('.md')).exists():
             return {}, ""
         return self._read_md_file(md_path)
     
@@ -245,11 +244,9 @@ class PostContentBuilder:
     """Builds complete post content from parts."""
     
     def build(self, frontmatter: str, intro: str, table: str) -> str:
-        content = frontmatter
-        if intro:
-            content += intro + "\n\n"
-        content += table
-        return content
+        if not intro:
+            return frontmatter + table
+        return frontmatter + intro + "\n\n" + table
 
 
 class OutputFilenameGenerator:
@@ -282,6 +279,9 @@ class ResultsGenerator:
         self.logger.header("MNHSFL Fencing Results Generator")
         self._ensure_output_dirs()
         csv_files = self._find_csv_files()
+        self._process_csv_files(csv_files)
+    
+    def _process_csv_files(self, csv_files: list[Path]):
         if not csv_files:
             self.logger.warning("No CSV files found. Nothing to generate.")
             return
@@ -349,8 +349,7 @@ class ResultsGenerator:
     
     def _validate_table_structure(self, data_rows: list[list[str]], 
                                   headers: list[str], csv_path: Path):
-        inconsistent = self.table_validator.validate(data_rows, headers)
-        if inconsistent:
+        if inconsistent := self.table_validator.validate(data_rows, headers):
             self.logger.warning(f"Inconsistent row lengths in {csv_path.name} at rows: {inconsistent}")
     
     def _build_frontmatter(self, csv_path: Path, intro_fm: dict[str, str], 
