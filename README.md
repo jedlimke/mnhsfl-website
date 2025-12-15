@@ -2,6 +2,40 @@
 
 Minnesota High School Fencing League (MNHSFL) website repo.
 
+## Development Setup
+
+### Quick Test (Docker Only - Recommended)
+
+**No Python installation needed!** Just run:
+
+```sh
+_tests/run-tests.sh
+```
+
+This builds a clean Docker container, runs all tests, and exits. Perfect for:
+- Admins who just want to verify their CSV files work
+- Contributors who want to test changes
+- Matching exactly what CI/CD will run
+
+### For Developers (Local Python)
+
+If you want to develop locally without Docker:
+
+1. **Install pytest:**
+   ```sh
+   pip install pytest
+   ```
+
+2. **Run tests:**
+   ```sh
+   pytest _tests/test_generate_results.py -v
+   ```
+
+3. **Generate results locally:**
+   ```sh
+   python _scripts/generate_results.py
+   ```
+
 ## Testing Locally
 
 To preview the GitHub Pages site locally using Docker:

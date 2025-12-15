@@ -2,7 +2,32 @@
 
 Integration tests for the MNHSFL website build system.
 
-## Running Tests
+## Quick Start (Docker - Recommended)
+
+**No Python installation needed!** Run from project root:
+
+```bash
+_tests/run-tests.sh
+```
+
+This:
+- Builds a clean Docker container
+- Installs pytest
+- Runs all tests
+- Shows results
+- Cleans up automatically
+
+Perfect for admins and contributors who just need to verify things work.
+
+## Setup (Local Python Development)
+
+If developing locally without Docker:
+
+```bash
+pip install pytest
+```
+
+## Running Tests (Local)
 
 ```bash
 # Run all tests
@@ -43,19 +68,18 @@ def test_example(test_env, generator):
 
 ```
 _tests/
-├── test_generate_results.py    # Integration tests for results generator
-└── fixtures/                    # Test data (CSV and MD files together)
-    ├── basic-tournament.csv
-    ├── spring-open.csv
-    ├── spring-open.md           # Paired with spring-open.csv
-    ├── winter-classic.csv
-    ├── winter-classic.md        # Paired with winter-classic.csv
-    ├── inconsistent-columns.csv
-    ├── empty.csv
-    ├── bom-test.csv
-    ├── special-chars.csv
-    └── special-chars.md         # Paired with special-chars.csv
+├── Dockerfile               # Docker container for isolated testing
+├── run-tests.sh            # Script to build & run tests in Docker
+├── test_generate_results.py # Integration tests (pytest)
+├── fixtures/               # Test data (CSV and MD files)
+│   ├── basic-tournament.csv
+│   ├── spring-open.csv
+│   ├── spring-open.md
+│   └── ...
+└── README.md               # This file
 ```
+
+Everything test-related is self-contained in `_tests/`.
 
 ## Fixtures
 
@@ -108,10 +132,18 @@ Total: 12 test cases (10 base + 2 parameterized variants)
 
 ## CI/CD
 
-Tests run automatically on GitHub Actions:
+Tests run automatically on GitHub Actions as part of the deployment workflow:
+- **Test job** runs first with pytest validation
+- **Build job** only runs if tests pass
+- **Deploy job** only runs if build succeeds
+
+This ensures broken code never gets deployed to production.
+
+Workflow triggers:
 - On push to `master`
-- On PRs that modify generator or tests
-- On changes to test fixtures
+- Manual workflow dispatch
+
+See `.github/workflows/jekyll-gh-pages.yml` (integrated test + build + deploy)
 - Manual trigger available
 
 See `.github/workflows/test-results-generator.yml`

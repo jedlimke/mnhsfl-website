@@ -3,7 +3,25 @@
 ## Overview
 This system automates the conversion of tournament fencing results from CSV files into blog posts on the MNHSFL website.
 
-## Quick Start
+## Quick Test (Docker - Recommended)
+
+**No Python installation needed!** Run from project root:
+
+```bash
+_tests/run-tests.sh
+```
+
+This ensures the generator works correctly in a clean environment.
+
+## Setup (Local Development)
+
+For local development without Docker:
+
+```bash
+pip install pytest
+```
+
+## Quick Start (Local)
 
 ```bash
 # Generate result posts from CSV files
@@ -75,12 +93,18 @@ Total: 12 test cases (10 base + 2 parameterized variants)
 
 ### CI/CD
 
-Tests run automatically on GitHub Actions when:
+Tests run automatically on GitHub Actions as part of the deployment workflow:
+- **Test job** runs first with pytest validation
+- **Build job** only runs if tests pass (generates results + builds Jekyll)
+- **Deploy job** only runs if build succeeds
+
+This ensures broken code never gets deployed to production.
+
+Workflow triggers:
 - Pushing to `master` branch
-- Opening PRs that modify generator or tests
 - Manual workflow dispatch
 
-See `.github/workflows/test-results-generator.yml`
+See `.github/workflows/jekyll-gh-pages.yml` (integrated test + build + deploy)
 
 ## Architecture
 
