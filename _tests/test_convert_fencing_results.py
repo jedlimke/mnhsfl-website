@@ -93,9 +93,10 @@ class TestResultsGeneration:
     """Integration tests for CSV-to-markdown post generation."""
     
     def test_csv_only_no_frontmatter(self, test_env, generator):
-        """Test: CSV file only, no .md file - should use defaults."""
+        """Test: CSV file only, no .md file - should use defaults including today's date."""
         # Arrange
         copy_fixture(test_env, "basic-tournament", "test-tournament-2025")
+        today = datetime.now().strftime('%Y-%m-%d')
         
         # Act
         generator.run()
@@ -106,10 +107,13 @@ class TestResultsGeneration:
         
         output_content = output_files[0].read_text()
         
-        # Verify default frontmatter generated
+        # Verify default frontmatter generated with today's date
         assert "layout: post" in output_content
         assert "Test Tournament 2025" in output_content
-        assert datetime.now().strftime('%Y-%m-%d') in output_content
+        assert f"date: {today}" in output_content, f"Should use today's date ({today}) when no frontmatter provided"
+        
+        # Verify filename also uses today's date
+        assert output_files[0].name == f"{today}-test-tournament-2025.md", "Filename should use today's date"
         
         # Verify table content rendered correctly
         assert "| Fencer | Score |" in output_content
@@ -293,6 +297,121 @@ class TestEdgeCases:
         # Assert
         output_files = list(test_env['posts_dir'].glob("*.md"))
         assert len(output_files) == 0, "Should not generate posts when no CSVs found"
+
+
+class TestSubdirectoryHandling:
+    """Test handling of CSV/MD files in subdirectories."""
+    
+    def test_single_level_subdirectory(self, test_env, generator):
+        """Test: CSV in subdirectory outputs to matching subdirectory."""
+        # Arrange
+        subdir = test_env['source_dir'] / "2025"
+        subdir.mkdir()
+        
+        # Copy spring-open files into subdirectory
+        src_csv = test_env['fixtures_dir'] / "spring-open.csv"
+        src_md = test_env['fixtures_dir'] / "spring-open.md"
+        shutil.copy(src_csv, subdir / "spring-open-2025.csv")
+        shutil.copy(src_md, subdir / "spring-open-2025.md")
+        
+        # Act
+        generator.run()
+        
+        # Assert
+        # Should create matching subdirectory in posts
+        output_subdir = test_env['posts_dir'] / "2025"
+        assert output_subdir.exists(), "Should create matching subdirectory in posts"
+        
+        output_files = list(output_subdir.glob("*.md"))
+        assert len(output_files) == 1, "Should generate one post in subdirectory"
+        assert output_files[0].name == "2025-03-15-spring-open-2025.md"
+        
+        # Verify content has correct frontmatter
+        output_content = output_files[0].read_text()
+        assert 'title: "Spring Open Championship"' in output_content
+        assert "| Anderson Alex | 500 |" in output_content
+    
+    def test_two_level_subdirectory(self, test_env, generator):
+        """Test: CSV two levels deep outputs to matching nested subdirectory."""
+        # Arrange
+        subdir = test_env['source_dir'] / "2025" / "spring"
+        subdir.mkdir(parents=True)
+        
+        # Copy spring-open files into nested subdirectory
+        src_csv = test_env['fixtures_dir'] / "spring-open.csv"
+        src_md = test_env['fixtures_dir'] / "spring-open.md"
+        shutil.copy(src_csv, subdir / "spring-open-2025.csv")
+        shutil.copy(src_md, subdir / "spring-open-2025.md")
+        
+        # Act
+        generator.run()
+        
+        # Assert
+        output_subdir = test_env['posts_dir'] / "2025" / "spring"
+        assert output_subdir.exists(), "Should create matching nested subdirectory"
+        
+        output_files = list(output_subdir.glob("*.md"))
+        assert len(output_files) == 1, "Should generate one post in nested subdirectory"
+        assert output_files[0].name == "2025-03-15-spring-open-2025.md"
+        
+        # Verify content
+        output_content = output_files[0].read_text()
+        assert 'title: "Spring Open Championship"' in output_content
+    
+    def test_six_level_subdirectory(self, test_env, generator):
+        """Test: CSV six levels deep outputs to matching deeply nested subdirectory."""
+        # Arrange
+        subdir = test_env['source_dir'] / "a" / "b" / "c" / "d" / "e" / "f"
+        subdir.mkdir(parents=True)
+        
+        # Copy spring-open files into deeply nested subdirectory
+        src_csv = test_env['fixtures_dir'] / "spring-open.csv"
+        src_md = test_env['fixtures_dir'] / "spring-open.md"
+        shutil.copy(src_csv, subdir / "spring-open-2025.csv")
+        shutil.copy(src_md, subdir / "spring-open-2025.md")
+        
+        # Act
+        generator.run()
+        
+        # Assert
+        output_subdir = test_env['posts_dir'] / "a" / "b" / "c" / "d" / "e" / "f"
+        assert output_subdir.exists(), "Should create matching deeply nested subdirectory"
+        
+        output_files = list(output_subdir.glob("*.md"))
+        assert len(output_files) == 1, "Should generate one post in deeply nested subdirectory"
+        assert output_files[0].name == "2025-03-15-spring-open-2025.md"
+        
+        # Verify content
+        output_content = output_files[0].read_text()
+        assert 'title: "Spring Open Championship"' in output_content
+    
+    def test_mixed_root_and_subdirectory(self, test_env, generator):
+        """Test: CSVs in both root and subdirectories generate correctly."""
+        # Arrange
+        # Root level file
+        copy_fixture(test_env, "winter-classic", "winter-classic-2025")
+        
+        # Subdirectory file
+        subdir = test_env['source_dir'] / "2025"
+        subdir.mkdir()
+        src_csv = test_env['fixtures_dir'] / "spring-open.csv"
+        src_md = test_env['fixtures_dir'] / "spring-open.md"
+        shutil.copy(src_csv, subdir / "spring-open-2025.csv")
+        shutil.copy(src_md, subdir / "spring-open-2025.md")
+        
+        # Act
+        generator.run()
+        
+        # Assert
+        # Root level post
+        root_files = list(test_env['posts_dir'].glob("*.md"))
+        assert len(root_files) == 1, "Should generate one post at root level"
+        assert root_files[0].name == "2025-12-20-winter-classic-2025.md"
+        
+        # Subdirectory post
+        subdir_files = list((test_env['posts_dir'] / "2025").glob("*.md"))
+        assert len(subdir_files) == 1, "Should generate one post in subdirectory"
+        assert subdir_files[0].name == "2025-03-15-spring-open-2025.md"
 
 
 if __name__ == "__main__":
