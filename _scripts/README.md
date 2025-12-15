@@ -102,7 +102,13 @@ CSVs and Markdown files need to be in the base `_fencing-results` directory. Fil
 
 ```bash
 # Run all tests (Docker)
-docker build -f _tests/Dockerfile.test -t mnhsfl-test . && docker run --rm mnhsfl-test
+docker build -f _tests/Dockerfile.test -t mnhsfl-test . && \
+docker run --rm mnhsfl-test
+
+# Run tests with full error output (see validation messages)
+docker build -f _tests/Dockerfile.test -t mnhsfl-test . -q && \
+docker run --rm -v "${PWD}/_tests/fixtures:/app/_fencing-results:ro" -v "${PWD}/_scripts:/app/_scripts:ro" mnhsfl-test \
+python _scripts/convert_fencing_results.py
 
 # Run tests (Python)
 pytest _tests/test_convert_fencing_results.py -v

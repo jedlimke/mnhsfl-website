@@ -32,16 +32,16 @@ class Logger:
         print("=" * 60)
     
     def success(self, message: str):
-        print(f"✓ {message}")
+        print(f"✅\t{message}")
     
     def info(self, message: str):
-        print(f"  ℹ {message}")
+        print(f"ℹ️\t{message}")
     
     def warning(self, message: str):
-        print(f"⚠ {message}")
+        print(f"⚠️\t{message}")
     
     def error(self, message: str):
-        print(f"✗ {message}")
+        print(f"❌\t{message}")
     
     def processing(self, filename: str):
         print(f"\nProcessing: {filename}")
@@ -130,13 +130,18 @@ class DateExtractor:
     def _parse_datetime(self, date_value: str) -> tuple[str, str]:
         separator = ' ' if ' ' in date_value else 'T'
         file_date = date_value.split(separator)[0]
+        self._validate_date_format(file_date)
         return date_value, file_date
     
     def _validate_date_format(self, date_str: str):
         try:
             datetime.strptime(date_str, '%Y-%m-%d')
-        except ValueError as e:
-            raise ValueError(f"Invalid date format. Use YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. Error: {e}")
+        except ValueError:
+            raise ValueError(
+                f"Invalid date format: '{date_str}'\n"
+                f"\tExpected format: YYYY-MM-DD (e.g., 2025-03-15)\n"
+                f"\tOr with time: YYYY-MM-DD HH:MM:SS (e.g., 2025-03-15 14:30:00)"
+            )
 
 
 class CsvReader:
@@ -150,14 +155,28 @@ class CsvReader:
     
     def _validate_file_size(self, csv_path: Path):
         if (file_size_mb := csv_path.stat().st_size / (1024 * 1024)) > self.MAX_SIZE_MB:
-            raise ValueError(f"CSV file too large: {file_size_mb:.1f}MB (max: {self.MAX_SIZE_MB}MB)")
+            raise ValueError(
+                f"CSV file too large: {file_size_mb:.1f}MB (max: {self.MAX_SIZE_MB}MB)\n"
+                f"\tConsider splitting into multiple tournament files."
+            )
     
     def _read_csv_rows(self, csv_path: Path) -> list[list[str]]:
         try:
             with open(csv_path, 'r', encoding='utf-8') as f:
                 return list(csv.reader(f))
-        except (csv.Error, UnicodeDecodeError) as e:
-            raise ValueError(f"Error reading CSV: {e}")
+        except csv.Error as e:
+            raise ValueError(
+                f"Malformed CSV file\n"
+                f"\t{e}\n"
+                f"\tCheck for unclosed quotes, missing commas, or extra delimiters."
+            )
+        except UnicodeDecodeError as e:
+            raise ValueError(
+                f"File encoding error\n"
+                f"\t{e}\n"
+                f"\tSave the CSV file as UTF-8 encoding.\n"
+                f"\tIs the file actually a CSV?"
+            )
 
 
 class TableValidator:
@@ -300,12 +319,20 @@ class ResultsGenerator:
         return csv_files
     
     def _process_all_tournaments(self, csv_files: list[Path]):
+        errors = []
         for csv_path in csv_files:
             try:
                 self._process_tournament(csv_path)
+            except ValueError as e:
+                self._log_validation_error(csv_path, e)
+                errors.append((csv_path.name, str(e)))
             except Exception as e:
-                self.logger.error(f"Error processing {csv_path.name}: {e}")
-                raise
+                self._log_unexpected_error(csv_path, e)
+                errors.append((csv_path.name, str(e)))
+        
+        if errors:
+            self._print_error_summary(errors)
+            raise SystemExit(1)
     
     def _process_tournament(self, csv_path: Path):
         self.logger.processing(csv_path.name)
@@ -326,6 +353,24 @@ class ResultsGenerator:
             self.logger.success(f"Found intro content with frontmatter: {csv_path.stem}.md")
             return
         self.logger.success(f"Found intro content: {csv_path.stem}.md")
+    
+    def _log_validation_error(self, csv_path: Path, error: ValueError):
+        self.logger.error(f"VALIDATION ERROR in {csv_path.name}")
+        self.logger.error(f"\t{error}")
+        self.logger.info(f"\tFix the issue in _fencing-results/{csv_path.name} and try again.")
+
+    def _log_unexpected_error(self, csv_path: Path, error: Exception):
+        self.logger.error(f"UNEXPECTED ERROR in {csv_path.name}")
+        self.logger.error(f"\t{type(error).__name__}: {error}")
+        self.logger.info(f"\tThis may be a bug. Check _fencing-results/{csv_path.name} for issues.")
+    
+    def _print_error_summary(self, errors: list[tuple[str, str]]):
+        self.logger.header(f"FAILED: {len(errors)} file(s) had errors")
+        for filename, error in errors:
+            self.logger.error(f"- {filename}: {error}")
+        self.logger.info("Fix the errors above and commit again.")
+        self.logger.warning("The deployment has been blocked to prevent broken content.")
+
     
     def _build_post_content(self, csv_path: Path, rows: list[list[str]], 
                            intro_fm: dict[str, str], intro_content: str, date_str: str) -> str:
@@ -350,7 +395,11 @@ class ResultsGenerator:
     def _validate_table_structure(self, data_rows: list[list[str]], 
                                   headers: list[str], csv_path: Path):
         if inconsistent := self.table_validator.validate(data_rows, headers):
-            self.logger.warning(f"Inconsistent row lengths in {csv_path.name} at rows: {inconsistent}")
+            raise ValueError(
+                f"Inconsistent column count in rows: {inconsistent}\n"
+                f"\tExpected {len(headers)} column(s) to match headers: {', '.join(headers)}\n"
+                f"\tCheck that all data rows have the same number of columns as the header row."
+            )
     
     def _build_frontmatter(self, csv_path: Path, intro_fm: dict[str, str], 
                           date_str: str) -> str:

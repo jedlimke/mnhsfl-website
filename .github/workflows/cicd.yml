@@ -62,7 +62,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.13.x'
-      - name: Generate results pages
+      - name: Convert fencing results to posts
         run: python _scripts/convert_fencing_results.py
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1

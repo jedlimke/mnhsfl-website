@@ -176,24 +176,15 @@ class TestResultsGeneration:
         assert output_files[0].name == "2025-12-20-winter-classic-2025.md"
     
     def test_inconsistent_column_count(self, test_env, generator):
-        """Test: CSV with inconsistent column counts - should handle gracefully."""
+        """Test: CSV with inconsistent column counts - should fail with validation error."""
         # Arrange
         copy_fixture(test_env, "inconsistent-columns", "inconsistent-2025")
         
-        # Act
-        generator.run()
+        # Act & Assert
+        with pytest.raises(SystemExit) as exc_info:
+            generator.run()
         
-        # Assert
-        output_files = list(test_env['posts_dir'].glob("*.md"))
-        assert len(output_files) == 1, "Should not crash on inconsistent columns"
-        
-        output_content = output_files[0].read_text()
-        
-        # Verify table created with proper padding/truncation
-        assert "| Name | Score | Rank |" in output_content
-        assert "| Alice | 100 | 1 |" in output_content
-        assert "| Bob | 95 |  |" in output_content  # Padded with empty cell
-        assert "| Charlie | 90 | 3 |" in output_content  # Extra column truncated
+        assert exc_info.value.code == 1, "Should exit with error code 1 for inconsistent columns"
     
     def test_empty_csv(self, test_env, generator):
         """Test: Empty CSV file - should handle gracefully."""
@@ -297,6 +288,104 @@ class TestEdgeCases:
         # Assert
         output_files = list(test_env['posts_dir'].glob("*.md"))
         assert len(output_files) == 0, "Should not generate posts when no CSVs found"
+    
+    def test_invalid_date_format(self, test_env, generator, capsys):
+        """Test: Invalid date format in frontmatter - should fail with helpful error."""
+        # Arrange
+        copy_fixture(test_env, "bad-date")
+        
+        # Act & Assert
+        with pytest.raises(SystemExit) as exc_info:
+            generator.run()
+        
+        assert exc_info.value.code == 1, "Should exit with error code 1"
+        
+        # Verify error message is helpful
+        captured = capsys.readouterr()
+        assert "VALIDATION ERROR" in captured.out
+        assert "bad-date.csv" in captured.out
+        assert "Invalid date format" in captured.out
+        assert "2025-13-45" in captured.out
+        assert "Expected format: YYYY-MM-DD" in captured.out
+    
+    def test_unconverted_xls(self, test_env, generator, capsys):
+        """Test: CSV that's actually not a CSV at all: it's an XLS file with the .csv file extension - should fail."""
+        # Arrange
+        copy_fixture(test_env, "unconverted-xls")
+        
+        # Act & Assert
+        with pytest.raises(SystemExit) as exc_info:
+            generator.run()
+        
+        assert exc_info.value.code == 1, "Should exit with error code 1"
+        
+        # Verify error message mentions encoding/malformed CSV
+        captured = capsys.readouterr()
+        assert "unconverted-xls.csv" in captured.out
+        assert ("File encoding error" in captured.out or "Malformed CSV" in captured.out), \
+            "Should mention encoding or CSV format issue"
+    
+    def test_garbage(self, test_env, generator, capsys):
+        """Test: CSV that's actually just some garbage text - should fail."""
+        # Arrange
+        copy_fixture(test_env, "garbage")
+        
+        # Act & Assert
+        with pytest.raises(SystemExit) as exc_info:
+            generator.run()
+        
+        assert exc_info.value.code == 1, "Should exit with error code 1"
+        
+        # Verify error message is present
+        captured = capsys.readouterr()
+        assert "garbage.csv" in captured.out
+        assert ("ERROR" in captured.out or "error" in captured.out), \
+            "Should have an error message"
+        
+    def test_mismatched_column_count(self, test_env, generator, capsys):
+        """Test: CSV with row that has more columns than headers - should fail."""
+        # Arrange
+        copy_fixture(test_env, "mismatched-header-vs-row-length")
+        
+        # Act & Assert
+        with pytest.raises(SystemExit) as exc_info:
+            generator.run()
+        
+        assert exc_info.value.code == 1, "Should exit with error code 1"
+        
+        # Verify error message is specific
+        captured = capsys.readouterr()
+        assert "VALIDATION ERROR" in captured.out
+        assert "mismatched-header-vs-row-length.csv" in captured.out
+        assert "Inconsistent column count" in captured.out
+        assert "Expected 2 column(s)" in captured.out
+        assert "Fencer, Score" in captured.out
+    
+    def test_multiple_files_one_bad_date(self, test_env, generator, capsys):
+        """Test: Multiple files with one bad date - should collect error and fail gracefully."""
+        # Arrange
+        # Good files
+        copy_fixture(test_env, "basic-tournament", "good-tournament")
+        copy_fixture(test_env, "spring-open")
+        
+        # Bad date file
+        copy_fixture(test_env, "bad-date")
+        
+        # Act & Assert
+        with pytest.raises(SystemExit) as exc_info:
+            generator.run()
+        
+        assert exc_info.value.code == 1, "Should exit with error code 1"
+        
+        # Capture output to verify error message
+        captured = capsys.readouterr()
+        assert "FAILED: 1 file(s) had errors" in captured.out
+        assert "bad-date.csv" in captured.out
+        assert "Invalid date format" in captured.out
+        
+        # Verify good files were processed before errors
+        output_files = list(test_env['posts_dir'].glob("*.md"))
+        assert len(output_files) == 2, "Should have processed the 2 good files before failing"
 
 
 if __name__ == "__main__":
