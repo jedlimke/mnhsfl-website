@@ -1,0 +1,51 @@
+name: Test Results Generator
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - '_scripts/generate_results.py'
+      - '_tests/test_generate_results.py'
+      - '_tests/fixtures/**'
+      - '.github/workflows/test-results-generator.yml'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - '_scripts/generate_results.py'
+      - '_tests/test_generate_results.py'
+      - '_tests/fixtures/**'
+      - '.github/workflows/test-results-generator.yml'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install pytest
+    
+    - name: Run integration tests
+      run: |
+        pytest _tests/test_generate_results.py -v
+    
+    - name: Test on actual fixtures
+      run: |
+        python _scripts/generate_results.py
+    
+    - name: Verify generated posts exist
+      run: |
+        if [ -z "$(ls -A _posts/results/*.md 2>/dev/null)" ]; then
+          echo "❌ No posts generated!"
+          exit 1
+        fi
+        echo "✅ Generated posts:"
+        ls -la _posts/results/

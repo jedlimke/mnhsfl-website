@@ -8,12 +8,79 @@ This system automates the conversion of tournament fencing results from CSV file
 ```bash
 # Generate result posts from CSV files
 python _scripts/generate_results.py
+
+# Run tests
+pytest _tests/test_generate_results.py -v
 ```
 
 Results will be:
 - Generated as blog posts in `_posts/results/` (gitignored)
 - Listed on dedicated index page at `results/index.md`
 - Displayed on homepage and /news/ feed automatically
+
+## Testing
+
+### Run Tests
+
+```bash
+# Run all integration tests
+pytest _tests/test_generate_results.py -v
+
+# Run specific test class
+pytest _tests/test_generate_results.py::TestResultsGeneration -v
+
+# Run specific test
+pytest _tests/test_generate_results.py::TestResultsGeneration::test_csv_with_frontmatter_and_intro -v
+
+# Run tests matching a pattern
+pytest _tests/test_generate_results.py -k "frontmatter" -v
+```
+
+### Test Organization
+
+Tests live in `_tests/` at the project root:
+```
+_tests/
+├── test_generate_results.py    # Integration tests
+└── fixtures/                    # CSV and MD files together (mirrors real usage)
+    ├── basic-tournament.csv
+    ├── spring-open.csv
+    ├── spring-open.md           # Paired with CSV
+    ├── winter-classic.csv
+    ├── winter-classic.md        # Paired with CSV
+    └── ...
+```
+
+All tests follow the **AAA (Arrange-Act-Assert) pattern** with clear comments.
+
+Tests use **pytest** with:
+- Fixtures for automatic setup/teardown
+- Parameterized tests for multiple scenarios
+- Clean assertion syntax
+
+### Test Coverage
+
+The test suite (`_tests/test_generate_results.py`) covers:
+- ✅ CSV only (no .md file) - uses default frontmatter
+- ✅ CSV with frontmatter (no intro content)
+- ✅ CSV with frontmatter AND intro content
+- ✅ Inconsistent column counts (padding/truncation)
+- ✅ Empty CSV files
+- ✅ UTF-8 BOM handling
+- ✅ Multiple CSV files (parameterized: 1, 3, 5 files)
+- ✅ Special characters in frontmatter (colons, quotes)
+- ✅ Edge cases (no source dir, no CSV files)
+
+Total: 12 test cases (10 base + 2 parameterized variants)
+
+### CI/CD
+
+Tests run automatically on GitHub Actions when:
+- Pushing to `master` branch
+- Opening PRs that modify generator or tests
+- Manual workflow dispatch
+
+See `.github/workflows/test-results-generator.yml`
 
 ## Architecture
 
