@@ -11,4 +11,4 @@ COPY _fencing-results/ ./_fencing-results/
 COPY _posts/ ./_posts/
 
 # Run the generator
-CMD ["python", "_scripts/generate_results.py"]
+CMD ["python", "_scripts/convert_fencing_results.py"]

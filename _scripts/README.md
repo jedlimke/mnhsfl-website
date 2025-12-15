@@ -25,12 +25,12 @@ pip install pytest
 
 ```bash
 # Generate result posts from CSV files
-python _scripts/generate_results.py
+python _scripts/convert_fencing_results.py
 
 # Run tests
-pytest _tests/test_generate_results.py -v
+pytest _tests/test_convert_fencing_results.py -v
 ```
-pytest _tests/test_generate_results.py -v
+pytest _tests/test_convert_fencing_results.py -v
 ```
 
 Results will be:
@@ -44,16 +44,16 @@ Results will be:
 
 ```bash
 # Run all integration tests
-pytest _tests/test_generate_results.py -v
+pytest _tests/test_convert_fencing_results.py -v
 
 # Run specific test class
-pytest _tests/test_generate_results.py::TestResultsGeneration -v
+pytest _tests/test_convert_fencing_results.py::TestResultsGeneration -v
 
 # Run specific test
-pytest _tests/test_generate_results.py::TestResultsGeneration::test_csv_with_frontmatter_and_intro -v
+pytest _tests/test_convert_fencing_results.py::TestResultsGeneration::test_csv_with_frontmatter_and_intro -v
 
 # Run tests matching a pattern
-pytest _tests/test_generate_results.py -k "frontmatter" -v
+pytest _tests/test_convert_fencing_results.py -k "frontmatter" -v
 ```
 
 ### Test Organization
@@ -61,7 +61,7 @@ pytest _tests/test_generate_results.py -k "frontmatter" -v
 Tests live in `_tests/` at the project root:
 ```
 _tests/
-├── test_generate_results.py    # Integration tests
+├── test_convert_fencing_results.py    # Integration tests
 └── fixtures/                    # CSV and MD files together (mirrors real usage)
     ├── basic-tournament.csv
     ├── spring-open.csv
@@ -80,7 +80,7 @@ Tests use **pytest** with:
 
 ### Test Coverage
 
-The test suite (`_tests/test_generate_results.py`) covers:
+The test suite (`_tests/test_convert_fencing_results.py`) covers:
 - ✅ CSV only (no .md file) - uses default frontmatter
 - ✅ CSV with frontmatter (no intro content)
 - ✅ CSV with frontmatter AND intro content
@@ -125,7 +125,7 @@ A three-stage build pipeline:
 
 ```  
 _scripts/                  # Build automation
-  generate_results.py      # Python script that does the transformation
+  convert_fencing_results.py      # Python script that does the transformation
   README.md                # This file
 
 _fencing-results/          # Source data (committed to git)
@@ -205,7 +205,7 @@ Standard Jekyll deployment - serves the static HTML.
 
 3. **Run the script locally** (during development):
    ```bash
-   python _scripts/generate_results.py
+   python _scripts/convert_fencing_results.py
    ```
    
    This will:
@@ -267,7 +267,7 @@ The content-agnostic approach means admins have flexibility in what data to incl
 - `_fencing-results/*.csv` (required data)
 - `_fencing-results/*.md` (optional metadata)
 - `results/index.md` (generated index page)
-- `_scripts/generate_results.py` (the script itself)
+- `_scripts/convert_fencing_results.py` (the script itself)
 
 ❌ **Generated files (gitignored):**
 - `_posts/results/*.md` (regenerated from source)
@@ -284,7 +284,7 @@ The content-agnostic approach means admins have flexibility in what data to incl
 ### Local Development
 1. Add/edit CSV files in `_fencing-results/`
 2. Optionally create/edit matching `.md` files
-3. Run `python _scripts/generate_results.py`
+3. Run `python _scripts/convert_fencing_results.py`
 4. Test with Jekyll (`docker-compose up`)
 5. Commit source files only
 
@@ -303,7 +303,7 @@ The script runs in both environments, ensuring consistency.
 ### Testing Locally
 ```bash
 # Generate posts from CSV files
-python _scripts/generate_results.py
+python _scripts/convert_fencing_results.py
 
 # Start Jekyll server to see results
 docker-compose up
@@ -323,11 +323,11 @@ Since `_posts/results/` is gitignored, you can:
 rm -rf _posts/results/
 
 # Regenerate from source
-python _scripts/generate_results.py
+python _scripts/convert_fencing_results.py
 ```
 
 ### Modifying the Script
-- Script is in `_scripts/generate_results.py`
+- Script is in `_scripts/convert_fencing_results.py`
 - Comments explain each section
 - Always test locally before committing
 

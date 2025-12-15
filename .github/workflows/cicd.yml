@@ -37,10 +37,10 @@ jobs:
         run: pip install pytest
       
       - name: Run integration tests
-        run: pytest _tests/test_generate_results.py -v
+        run: pytest _tests/test_convert_fencing_results.py -v
       
       - name: Test generator on actual fixtures
-        run: python _scripts/generate_results.py
+        run: python _scripts/convert_fencing_results.py
       
       - name: Verify posts generated
         run: |
@@ -63,7 +63,7 @@ jobs:
         with:
           python-version: '3.13.x'
       - name: Generate results pages
-        run: python _scripts/generate_results.py
+        run: python _scripts/convert_fencing_results.py
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:

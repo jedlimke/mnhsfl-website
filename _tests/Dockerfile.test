@@ -14,4 +14,4 @@ COPY _tests/ ./_tests/
 COPY _fencing-results/ ./_fencing-results/
 
 # Run tests
-CMD ["pytest", "_tests/test_generate_results.py", "-v", "--tb=short"]
+CMD ["pytest", "_tests/test_convert_fencing_results.py", "-v", "--tb=short"]
