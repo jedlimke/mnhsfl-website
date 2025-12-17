@@ -238,17 +238,6 @@ Ultimately, the script just turns CSVs into markdown-formatted `_posts` which is
 
 See [Convert Fencing Results README](_scripts/README.md) for more info.
 
-#### Testing the Converter
-
-Run the full test suite in an isolated Docker environment.
-
-**One command (Mac/Linux/Windows):**
-```sh
-docker build -f _tests/Dockerfile.test -t mnhsfl-test . && docker run --rm mnhsfl-test
-```
-
-This runs all 12 integration tests to ensure the generator works correctly.
-
 #### Generating Results Locally (While Developing)
 
 Convert CSV files to posts locally without Python installed.
@@ -269,3 +258,37 @@ docker build -f _tests/Dockerfile.generate -t mnhsfl-generate . && docker run --
 ```
 
 The `-v` flag mounts your local `_posts/` directory so generated files appear on your machine!
+
+#### Testing the Converter
+
+Run the full test suite in an isolated Docker environment.
+
+**One command (Mac/Linux/Windows):**
+```sh
+docker build -f _tests/Dockerfile.test -t mnhsfl-test . && docker run --rm mnhsfl-test
+```
+
+This runs all 12 integration tests to ensure the generator works correctly.
+
+### Responsive Tables Plugin
+
+The site includes a custom Jekyll plugin that makes large data tables mobile-friendly without JavaScript.
+
+**How it works:**
+- At build time, the plugin scans all HTML tables in posts and pages
+- Extracts column headers from `<thead>` elements
+- Adds `data-label` attributes to each `<td>` cell with its corresponding header
+- CSS transforms tables into stacked cards on mobile devices (≤800px width)
+
+**Implementation:**
+- **Plugin:** `_plugins/responsive_tables.rb` (Ruby/Nokogiri)
+- **Filter usage:** Applied in `_layouts/post.html` and `_layouts/page.html`
+- **CSS:** Mobile card styles in `_sass/base.scss`
+
+**Why this approach:**
+- Zero runtime JavaScript overhead
+- Data labels generated at build time
+- Works perfectly with Markdown tables from CSV converter
+- Degrades gracefully if plugin fails
+
+**Location:** `_plugins/responsive_tables.rb`
