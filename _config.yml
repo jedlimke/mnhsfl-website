@@ -18,11 +18,14 @@ exclude:
   - README.md
   - _fencing-results/
   - _scripts/
+  - _tests/
   - Dockerfile
   - docker-compose.yml
   - DOCKER.md
   - Gemfile
   - Gemfile.lock
+  - vendor/
+  - .bundle/
 
 # =============================================================================
 # Social Links
