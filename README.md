@@ -1,5 +1,9 @@
 # Minnesota High School Fencing League (MNHSFL) – Website Repository
 
+[![CI/CD](https://github.com/jedlimke/mnhsfl-website/actions/workflows/cicd.yml/badge.svg)](https://github.com/jedlimke/mnhsfl-website/actions/workflows/cicd.yml)
+
+![MNHSFL Banner](assets/mnhsfl-block.svg)
+
 This is the official website for the Minnesota High School Fencing League. It's a static site built with Jekyll and automatically deployed to GitHub Pages.
 
 ## What Happens During Deployment
@@ -27,6 +31,58 @@ You'll need these tools installed:
 - **VS Code** - Recommended editor ([Download](https://code.visualstudio.com/))
 
 That's it! No Python, Ruby, or Jekyll installation needed.
+
+## Viewing the Site Locally
+
+To preview the site locally and _keep it automatically regenerating_ using Docker:
+
+1. **Build the Docker image:**
+   ```sh
+   docker-compose build
+   ```
+
+2. **Start the Jekyll server:**
+   ```sh
+   docker-compose up
+   ```
+
+3. **Visit in your browser:**
+   ```
+   http://localhost:4000
+   ```
+
+Press `Ctrl+C` to stop the server.
+
+## Git Workflow & Version Control
+
+![Content Update Workflow](assets/basic-workflow.png)
+
+### Basic Workflow
+
+1. **Pull latest code**: `git pull origin master`
+2. **Create a branch**: `git checkout -b my-branch-name`
+3. **Make your changes** (add posts, update results, etc.)
+4. **Stage changes**: `git add .`
+5. **Commit**: `git commit -m "Description of changes"`
+6. **Push your branch**: `git push origin my-branch-name`
+7. **Create a Pull Request** on GitHub
+8. **Wait for tests to pass**, then merge
+9. Deployment will then happen **automagically**
+
+### Pull Request Best Practices
+
+- Write clear descriptions of what changed
+- Keep commits focused on one thing
+- Test locally before creating the PR
+- Review the changes before requesting merge
+
+**Why use branches and pull requests?**
+- Test major changes without affecting the live site
+- Automated tests catch errors before deployment
+- Keep `master` stable and production-ready
+- Get feedback before deploying
+
+**Learn more**: [GitHub's Pull Request Guide](https://github.blog/developer-skills/github/beginners-guide-to-github-creating-a-pull-request/)
 
 ## Creating News Posts
 
@@ -140,12 +196,19 @@ The intro appears before the results table in the generated post.
 
 ## Git Workflow & Version Control
 
+![Content Update Workflow](assets/basic-workflow.png)
+
 ### Basic Workflow
 
-1. **Make your changes** (add posts, update results, etc.)
-2. **Stage changes**: `git add .`
-3. **Commit**: `git commit -m "Add winter tournament results"`
-4. **Push**: `git push origin master`
+1. **Pull latest code**: `git pull origin master`
+2. **Create a branch**: `git checkout -b my-branch-name`
+3. **Make your changes** (add posts, update results, etc.)
+4. **Stage changes**: `git add .`
+5. **Commit**: `git commit -m "Description of changes"`
+6. **Push your branch**: `git push origin my-branch-name`
+7. **Create a Pull Request** on GitHub
+8. **Wait for tests to pass**, then merge
+9. Deployment will then happen **automagically**
 
 ### Working with Branches
 
@@ -179,27 +242,6 @@ Then create a **Pull Request** on GitHub to merge your changes.
 - Test major changes without affecting the live site
 - Get feedback before deploying
 - Keep `master` stable and production-ready
-
-## Viewing the Site Locally
-
-To preview the GitHub Pages site locally and _keep it automatically regenerating_ using Docker:
-
-1. **Build the Docker image:**
-   ```sh
-   docker-compose build
-   ```
-
-2. **Start the Jekyll server:**
-   ```sh
-   docker-compose up
-   ```
-
-3. **Visit in your browser:**
-   ```
-   http://localhost:4000
-   ```
-
-Press `Ctrl+C` to stop the server.
 
 ## Engineering Notes
 
@@ -238,17 +280,6 @@ Ultimately, the script just turns CSVs into markdown-formatted `_posts` which is
 
 See [Convert Fencing Results README](_scripts/README.md) for more info.
 
-#### Testing the Converter
-
-Run the full test suite in an isolated Docker environment.
-
-**One command (Mac/Linux/Windows):**
-```sh
-docker build -f _tests/Dockerfile.test -t mnhsfl-test . && docker run --rm mnhsfl-test
-```
-
-This runs all 12 integration tests to ensure the generator works correctly.
-
 #### Generating Results Locally (While Developing)
 
 Convert CSV files to posts locally without Python installed.
@@ -269,3 +300,37 @@ docker build -f _tests/Dockerfile.generate -t mnhsfl-generate . && docker run --
 ```
 
 The `-v` flag mounts your local `_posts/` directory so generated files appear on your machine!
+
+#### Testing the Converter
+
+Run the full test suite in an isolated Docker environment.
+
+**One command (Mac/Linux/Windows):**
+```sh
+docker build -f _tests/Dockerfile.test -t mnhsfl-test . && docker run --rm mnhsfl-test
+```
+
+This runs all 12 integration tests to ensure the generator works correctly.
+
+### Responsive Tables Plugin
+
+The site includes a custom Jekyll plugin that makes large data tables mobile-friendly without JavaScript.
+
+**How it works:**
+- At build time, the plugin scans all HTML tables in posts and pages
+- Extracts column headers from `<thead>` elements
+- Adds `data-label` attributes to each `<td>` cell with its corresponding header
+- CSS transforms tables into stacked cards on mobile devices (≤800px width)
+
+**Implementation:**
+- **Plugin:** `_plugins/responsive_tables.rb` (Ruby/Nokogiri)
+- **Filter usage:** Applied in `_layouts/post.html` and `_layouts/page.html`
+- **CSS:** Mobile card styles in `_sass/base.scss`
+
+**Why this approach:**
+- Zero runtime JavaScript overhead
+- Data labels generated at build time
+- Works perfectly with Markdown tables from CSV converter
+- Degrades gracefully if plugin fails
+
+**Location:** `_plugins/responsive_tables.rb`

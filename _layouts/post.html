@@ -27,7 +27,7 @@ layout: base
 
 	{%- comment -%} Post content {%- endcomment -%}
 	<div class="post-content content-wrapper" itemprop="articleBody">
-		{{ content }}
+		{{ content | responsive_tables }}
 	</div>
 
 </article>
