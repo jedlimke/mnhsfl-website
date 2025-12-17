@@ -1,5 +1,7 @@
 # Minnesota High School Fencing League (MNHSFL) – Website Repository
 
+![Content Update Workflow](assets/mnhsfl-block.svg)
+
 This is the official website for the Minnesota High School Fencing League. It's a static site built with Jekyll and automatically deployed to GitHub Pages.
 
 ## What Happens During Deployment
@@ -27,6 +29,58 @@ You'll need these tools installed:
 - **VS Code** - Recommended editor ([Download](https://code.visualstudio.com/))
 
 That's it! No Python, Ruby, or Jekyll installation needed.
+
+## Viewing the Site Locally
+
+To preview the site locally and _keep it automatically regenerating_ using Docker:
+
+1. **Build the Docker image:**
+   ```sh
+   docker-compose build
+   ```
+
+2. **Start the Jekyll server:**
+   ```sh
+   docker-compose up
+   ```
+
+3. **Visit in your browser:**
+   ```
+   http://localhost:4000
+   ```
+
+Press `Ctrl+C` to stop the server.
+
+## Git Workflow & Version Control
+
+![Content Update Workflow](assets/basic-workflow.png)
+
+### Basic Workflow
+
+1. **Pull latest code**: `git pull origin master`
+2. **Create a branch**: `git checkout -b my-branch-name`
+3. **Make your changes** (add posts, update results, etc.)
+4. **Stage changes**: `git add .`
+5. **Commit**: `git commit -m "Description of changes"`
+6. **Push your branch**: `git push origin my-branch-name`
+7. **Create a Pull Request** on GitHub
+8. **Wait for tests to pass**, then merge
+9. Deployment will then happen **automagically**
+
+### Pull Request Best Practices
+
+- Write clear descriptions of what changed
+- Keep commits focused on one thing
+- Test locally before creating the PR
+- Review the changes before requesting merge
+
+**Why use branches and pull requests?**
+- Test major changes without affecting the live site
+- Automated tests catch errors before deployment
+- Keep `master` stable and production-ready
+- Get feedback before deploying
+
+**Learn more**: [GitHub's Pull Request Guide](https://github.blog/developer-skills/github/beginners-guide-to-github-creating-a-pull-request/)
 
 ## Creating News Posts
 
@@ -140,12 +194,19 @@ The intro appears before the results table in the generated post.
 
 ## Git Workflow & Version Control
 
+![Content Update Workflow](assets/basic-workflow.png)
+
 ### Basic Workflow
 
-1. **Make your changes** (add posts, update results, etc.)
-2. **Stage changes**: `git add .`
-3. **Commit**: `git commit -m "Add winter tournament results"`
-4. **Push**: `git push origin master`
+1. **Pull latest code**: `git pull origin master`
+2. **Create a branch**: `git checkout -b my-branch-name`
+3. **Make your changes** (add posts, update results, etc.)
+4. **Stage changes**: `git add .`
+5. **Commit**: `git commit -m "Description of changes"`
+6. **Push your branch**: `git push origin my-branch-name`
+7. **Create a Pull Request** on GitHub
+8. **Wait for tests to pass**, then merge
+9. Deployment will then happen **automagically**
 
 ### Working with Branches
 
@@ -179,27 +240,6 @@ Then create a **Pull Request** on GitHub to merge your changes.
 - Test major changes without affecting the live site
 - Get feedback before deploying
 - Keep `master` stable and production-ready
-
-## Viewing the Site Locally
-
-To preview the GitHub Pages site locally and _keep it automatically regenerating_ using Docker:
-
-1. **Build the Docker image:**
-   ```sh
-   docker-compose build
-   ```
-
-2. **Start the Jekyll server:**
-   ```sh
-   docker-compose up
-   ```
-
-3. **Visit in your browser:**
-   ```
-   http://localhost:4000
-   ```
-
-Press `Ctrl+C` to stop the server.
 
 ## Engineering Notes
 
